@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>KISAH TANAH AIR BY JHON</title>
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: monospace;
+      white-space: pre-wrap;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="output">Memuat data...</div>
+  <div id="total"></div>
+
+  <script>
+    const url = "https://servers-frontend.fivem.net/api/servers/single/3e3gdb";
+    const output = document.getElementById("output");
+    const total = document.getElementById("total");
+
+    async function fetchData() {
+      try {
+        const res = await fetch(url);
+        const json = await res.json();
+
+        const players = json?.Data?.players || [];
+        output.textContent = JSON.stringify(players, null, 2);
+        total.textContent = `\nTOTAL PLAYER : ${players.length}`;
+
+      } catch (e) {
+        output.textContent = "Gagal memuat data: " + e.message;
+        total.textContent = "";
+      }
+    }
+
+    fetchData();
+    setInterval(fetchData, 3000); // update tiap 3 detik
+  </script>
+</body>
+</html>
