@@ -6,39 +6,88 @@
   <style>
     body {
       background: #000;
-      color: #fff;
+      color: #0f0;
       font-family: monospace;
-      white-space: pre-wrap;
-      margin: 10px;
+      margin: 20px;
+    }
+    h1 {
+      color: #0ff;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #0f0;
+      padding: 6px 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #030;
+    }
+    tr:nth-child(even) {
+      background-color: #010;
+    }
+    #total {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: right;
+      color: #ff0;
     }
   </style>
 </head>
 <body>
-  <div id="output">Memuat data...</div>
-  <div id="total"></div>
+  <h1>🛰️ KISAH TANAH AIR BY JHON</h1>
+  <div id="total">Memuat data...</div>
+  <table id="playerTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nama</th>
+        <th>ID</th>
+        <th>Ping</th>
+      </tr>
+    </thead>
+    <tbody id="playerBody">
+      <tr><td colspan="4">Memuat data...</td></tr>
+    </tbody>
+  </table>
 
   <script>
     const url = "https://servers-frontend.fivem.net/api/servers/single/rj9l5g";
-    const output = document.getElementById("output");
+    const playerBody = document.getElementById("playerBody");
     const total = document.getElementById("total");
 
     async function fetchData() {
       try {
         const res = await fetch(url);
         const json = await res.json();
-
         const players = json?.Data?.players || [];
-        output.textContent = JSON.stringify(players, null, 2);
-        total.textContent = `\nTOTAL PLAYER : ${players.length}`;
 
+        if (players.length === 0) {
+          playerBody.innerHTML = `<tr><td colspan="4">Tidak ada pemain online</td></tr>`;
+        } else {
+          playerBody.innerHTML = players.map((p, i) => `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${p.name || "-"}</td>
+              <td>${p.id || "-"}</td>
+              <td>${p.ping || "-"}</td>
+            </tr>
+          `).join("");
+        }
+
+        total.textContent = `TOTAL PLAYER: ${players.length}`;
       } catch (e) {
-        output.textContent = "Gagal memuat data: " + e.message;
+        playerBody.innerHTML = `<tr><td colspan="4">Gagal memuat data: ${e.message}</td></tr>`;
         total.textContent = "";
       }
     }
 
     fetchData();
-    setInterval(fetchData, 3000); // update tiap 3 detik
+    setInterval(fetchData, 3000); // update setiap 3 detik
   </script>
 </body>
 </html>
