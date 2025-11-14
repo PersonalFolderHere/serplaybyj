@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Player FiveM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .player-list {
+            margin-top: 20px;
+        }
+        .player {
+            background-color: #fafafa;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .player p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Data Player FiveM</h1>
+        <div id="player-list" class="player-list">
+            <p>Loading data...</p>
+        </div>
+    </div>
+
+    <script>
+        // URL API
+        const apiURL = "https://servers-frontend.fivem.net/api/servers/single/bak4pl";
+
+        // Fungsi untuk mengambil dan menampilkan data pemain
+        async function fetchPlayerData() {
+            try {
+                const response = await fetch(apiURL);
+                const data = await response.json();
+
+                // Memeriksa apakah data pemain tersedia
+                if (data.Data && data.Data.players) {
+                    const playerList = data.Data.players;
+                    const playerListContainer = document.getElementById("player-list");
+
+                    // Menghapus pesan "Loading..."
+                    playerListContainer.innerHTML = "";
+
+                    // Menampilkan data pemain
+                    if (playerList.length > 0) {
+                        playerList.forEach(player => {
+                            const playerDiv = document.createElement("div");
+                            playerDiv.classList.add("player");
+
+                            playerDiv.innerHTML = `
+                                <p><strong>Nama:</strong> ${player.name || 'Tidak tersedia'}</p>
+                                <p><strong>ID Pemain:</strong> ${player.id || 'Tidak tersedia'}</p>
+                                <p><strong>Ping:</strong> ${player.ping || 'Tidak tersedia'}</p>
+                            `;
+
+                            playerListContainer.appendChild(playerDiv);
+                        });
+                    } else {
+                        playerListContainer.innerHTML = "<p>Tidak ada pemain yang sedang online.</p>";
+                    }
+                } else {
+                    throw new Error("Data pemain tidak ditemukan.");
+                }
+            } catch (error) {
+                console.error("Terjadi kesalahan:", error);
+                document.getElementById("player-list").innerHTML = "<p>Terjadi kesalahan saat mengambil data.</p>";
+            }
+        }
+
+        // Memanggil fungsi untuk mendapatkan data
+        fetchPlayerData();
+    </script>
+
+</body>
+</html>
